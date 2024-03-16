@@ -1,182 +1,187 @@
 <script setup lang="ts">
-  // import { ref } from 'vue'
-  import passwordForm from '@v/login/components/passwordForm.vue'
-  import phoneForm from '@v/login/components/phoneForm.vue'
-  import DragTool from '@/components/DragTool.vue';
+  import { onBeforeMount } from 'vue'
 
-  // const isKeyDown = ref(false)
-  // const dinatesX = ref(0)
-  // const dinatesY = ref(0)
-
-  // const mousedown = (event: MouseEvent) => {
-  //   isKeyDown.value = true
-  //   dinatesX.value = event.x
-  //   dinatesY.value = event.y
-
-  //   document.onmousemove = (ev) => {
-  //     if (!isKeyDown.value) return
-  //     const x = ev.screenX - dinatesX.value
-  //     const y = ev.screenY - dinatesY.value
-  //     // 给主进程传入坐标
-  //     const data = { appX: x, appY: y }
-  //     window.electron.ipcRenderer.invoke('custom-adsorption', data)
-  //   }
-  //   document.onmouseup = () => {
-  //     isKeyDown.value = false
-  //   }
-  // }
+  onBeforeMount(() => {
+    window.electron.ipcRenderer.invoke('resize-window')
+  })
 </script>
 
 <template>
-  <DragTool>
-    <div class="login">
-      <!-- 左边 -->
-      <div class="login_adv">
-        <div class="login_adv__title">
-          <h2>众智学院</h2>
-          <h4>客户关系管理系统</h4>
-          <p>让业务在线更高效，加速企业数字化升级。</p>
-        </div>
-        <div class="login_adv__mask"></div>
-        <div class="login_adv__image">
-          <img src="@/assets/images/data.png" alt="" width="100%" />
-        </div>
-        <div class="login_adv__bottom">© 众智客户管理系统 1.0.11</div>
+  <section class="aminui-wrapper">
+    <!-- 1级菜单 -->
+    <div class="aminui-side-split">
+      <!-- 顶部Logo -->
+      <div class="aminui-side-split-top">
+        <router-link to="/">
+          <img class="logo" src="@/assets/images/logo-r.png" />
+        </router-link>
       </div>
-      <!-- 右边 -->
-      <div class="login-main">
-        <div class="login-form">
-          <div class="login-header">
-            <div class="login-img">
-              <img src="@/assets/kun.jpg" alt="" />
-              <label>众智客户管理系统</label>
-            </div>
-          </div>
-          <el-tabs>
-            <el-tab-pane label="账号" lazy style="height: 300px;">
-              <password-form></password-form>
-            </el-tab-pane>
-            <el-tab-pane label="手机号登录" lazy style="height: 300px;">
-              <phone-form></phone-form>
-            </el-tab-pane>
-          </el-tabs>
-          <template v-if="true">
-            <el-divider>其他登录方式</el-divider>
-            <div class="login-oauth">
-              <!-- 微信按钮 -->
-              <el-button type="success" size="large" circle>
-                <el-icon size="large"><ChatDotRound /></el-icon>
-              </el-button>
-            </div>
-          </template>
-        </div>
+      <!-- 菜单项 -->
+      <div class="adminui-side-split-scroll">
+        <el-scrollbar>
+          <ul>
+            <li class="active">
+              <el-icon><ChatRound /></el-icon>
+              <p>首页</p>
+            </li>
+            <li>
+              <el-icon><ChatRound /></el-icon>
+              <p>新媒体</p>
+            </li>
+          </ul>
+        </el-scrollbar>
       </div>
     </div>
-  </DragTool>
+    <!-- 2级菜单 -->
+    <div class="aminui-side">
+      <!-- 标题 -->
+      <div class="adminui-side-top">
+        <h2>首页</h2>
+      </div>
+      <!-- 菜单项 -->
+      <div class="adminui-side-scroll">
+        <el-scrollbar>
+          <el-menu>
+            <el-menu-item index="1">
+              <el-icon><ChatRound /></el-icon>
+              <span>仪表盘</span>
+            </el-menu-item>
+            <el-menu-item index="2">
+              <el-icon><ChatRound /></el-icon>
+              <span>仪表盘</span>
+            </el-menu-item>
+            <el-menu-item index="3">
+              <el-icon><ChatRound /></el-icon>
+              <span>仪表盘</span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <el-icon><ChatRound /></el-icon>
+              <span>仪表盘</span>
+            </el-menu-item>
+            <el-menu-item index="5">
+              <el-icon><ChatRound /></el-icon>
+              <span>仪表盘</span>
+            </el-menu-item>
+            <el-menu-item index="6">
+              <el-icon><ChatRound /></el-icon>
+              <span>仪表盘</span>
+            </el-menu-item>
+          </el-menu>
+        </el-scrollbar>
+      </div>
+      <!-- 伸缩图标 -->
+      <div class="adminui-side-bottom">
+        <el-icon><el-icon-expand /></el-icon>
+      </div>
+    </div>
+    <!-- 右侧组件 -->
+    <div class="aminui-body">右侧内容</div>
+  </section>
 </template>
 
 <style scoped lang="scss">
-  .login {
-    width: 100vw;
-    height: 100vh;
-    background: #fff;
+  .aminui-wrapper {
     display: flex;
-    .login_adv {
-      background-image: url('@/assets/images/auth_banner.jpg');
-      width: 40%;
-      position: relative;
-      user-select: none;
-      .login_adv__title {
-        color: #fff;
-        padding: 40px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 2;
-        h2 {
-          font-size: 40px;
-        }
-        h4 {
-          font-size: 18px;
-          margin-top: 10px;
-          font-weight: normal;
-        }
-        p {
-          font-size: 14px;
-          margin-top: 10px;
-          line-height: 1.8;
-          color: rgba(255, 255, 255, 0.6);
-        }
-        div {
-          margin-top: 10px;
-          display: flex;
-          align-items: center;
-        }
-      }
-      .login_adv__image {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 80px;
-        padding: 40px;
-        z-index: 3;
-        img {
-          width: 100%;
-        }
-      }
-      .login_adv__bottom {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        color: #fff;
-        padding: 0 40px 40px 40px;
-        background-image: linear-gradient(transparent, #000);
-        z-index: 3;
-      }
-      .login_adv__mask {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1;
-      }
-    }
-
-    .login-main {
-      flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    .aminui-side-split {
       display: flex;
-      overflow: auto;
-      .login-form {
-        width: 400px;
-        margin: auto;
-        padding: 80px 0 0 0;
-        .login-header {
-          margin-bottom: 40px;
-          .login-img {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            img {
-              width: 40px;
-              height: 40px;
-              vertical-align: bottom;
-              margin-right: 10px;
-            }
-            label {
-              font-size: 26px;
-              font-weight: bold;
-            }
-          }
-        }
-        .login-oauth {
-          display: flex;
-          justify-content: space-around;
-        }
+      flex-direction: column;
+      width: 65px;
+      height: 100vh;
+      overflow: hidden;
+      background: #222b45;
+      .aminui-side-split-top {
+        height: 49px;
+        -webkit-app-region: drag;
+      }
+      .aminui-side-split-top a {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .aminui-side-split-top .logo {
+        height: 30px;
+        vertical-align: bottom;
+      }
+      .adminui-side-split-scroll {
+        overflow: auto;
+        overflow-x: hidden;
+        height: 100%;
+        flex: 1;
+      }
+      li {
+        cursor: pointer;
+        width: 65px;
+        height: 65px;
+        color: #fff;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      li i {
+        font-size: 18px;
+      }
+      li p {
+        margin-top: 5px;
+        font-size: 12px;
+      }
+      li:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      li.active {
+        background: #409eff;
       }
     }
+    .aminui-side {
+      display: flex;
+      flex-flow: column;
+      width: 210px;
+      background: #fff;
+      box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+      border-right: 1px solid #e6e6e6;
+      .adminui-side-top {
+        -webkit-app-region: drag;
+        border-bottom: 1px solid #ebeef5;
+        height: 49px;
+        line-height: 50px;
+      }
+      .adminui-side-top h2 {
+        padding: 0 20px;
+        font-size: 17px;
+        color: #3c4a54;
+      }
+      .adminui-side-scroll {
+        overflow: auto;
+        overflow-x: hidden;
+        flex: 1;
+      }
+      .adminui-side-bottom {
+        border-top: 1px solid #ebeef5;
+        height: 51px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .adminui-side-bottom i {
+        font-size: 16px;
+      }
+      .adminui-side-bottom:hover {
+        color: var(--el-color-primary);
+      }
+    }
+    .aminui-body {
+      flex: 1;
+    }
+  }
+  .el-menu {
+    border-right: 0px;
   }
 </style>

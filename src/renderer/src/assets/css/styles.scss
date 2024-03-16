@@ -1,0 +1,22 @@
+@import 'element-plus/theme-chalk/dark/css-vars.css';
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+html.dark {
+  //登录页背景
+  .login {
+    background: var(--el-bg-color);
+  }
+
+  a {
+    color: #fff;
+  }
+}

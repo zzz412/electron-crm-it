@@ -27,27 +27,29 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  // 监听渲染进程窗口拖拽事件
-  ipcMain.handle('custom-adsorption', (event, res) => {
-    const x = res.appX
-    const y = res.appY
-    mainWindow.setPosition(x, y)
-  })
-
   /** 窗口移动功能封装 */
   // 窗口移动 位置刷新定时器
   let movingInterval: NodeJS.Timeout | null = null
-
-  /**
-   * 窗口移动事件
-   */
+  // 窗口原位置
+  let original = ''
+  function originPosition() {
+    let originalState = true
+    return function (size: any) {
+      if (originalState) {
+        original = size
+      }
+      originalState = false
+    }
+  }
+  const setPosition = originPosition()
+  // 窗口移动事件
   ipcMain.handle('window-move-open', (event, canMoving) => {
     let winStartPosition = { x: 0, y: 0 }
     let mouseStartPosition = { x: 0, y: 0 }
     // 获取当前聚焦的窗口
     const currentWindow = BrowserWindow.getFocusedWindow()
     const currentWindowSize = currentWindow?.getSize()
-
+    setPosition(currentWindowSize)
     if (currentWindow) {
       if (canMoving) {
         // 读取原位置
@@ -75,8 +77,8 @@ function createWindow(): void {
             currentWindow.setBounds({
               x: x,
               y: y,
-              width: currentWindowSize?.[0],
-              height: currentWindowSize?.[1]
+              width: Number(original[0]),
+              height: Number(original[1])
             })
           }
         }, 10)
@@ -86,31 +88,28 @@ function createWindow(): void {
       }
     }
   })
+  /** 窗口移动功能封装 */
 
-  // 主进程监听渲染进程事件
-  // ipcMain.handle('a', (event, msg) => {
-  //   if (msg === 'a') {
-  //     const listWindow = new BrowserWindow({
-  //       width: 500,
-  //       height: 300,
-  //       show: false,
-  //       autoHideMenuBar: true,
-  //       ...(process.platform === 'linux' ? { icon } : {}),
-  //       webPreferences: {
-  //         preload: join(__dirname, '../preload/index.js'),
-  //         sandbox: false
-  //       }
-  //     })
+  /** 窗口关闭功能 */
+  ipcMain.handle('close-login', () => {
+    mainWindow.close()
+  })
+  /** 窗口关闭功能 */
 
-  //     listWindow.on('ready-to-show', () => {
-  //       listWindow.show()
-  //     })
+  /** 进入后台管理系统首页 **/
+  ipcMain.handle('resize-window', () => {
+    // 设置窗口大小
+    mainWindow.setSize(1200, 720)
+    // 设置窗口最小值
+    mainWindow.setMinimumSize(1000, 500)
+    // 设置窗口居中
+    mainWindow.center()
+    // 设置窗口大小可修改
+    mainWindow.setResizable(true)
+  })
+  /** 进入后台管理系统首页 **/
 
-  //     listWindow.loadURL(process.env['ELECTRON_RENDERER_URL']+'/#/list');
-  //   } else if (msg === 'b') {
-  //     console.log('bbb任务')
-  //   }
-  // })
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }

@@ -15,6 +15,7 @@ module.exports = {
     'vue/require-default-prop': 'off',
     'vue/multi-word-component-names': 'off',
     'prettier/prettier': 'off',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    "@typescript-eslint/no-non-null-assertion": 'off'
   }
 }

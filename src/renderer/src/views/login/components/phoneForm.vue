@@ -4,6 +4,7 @@
   import { PhoneRuleForm } from '@/interface/login'
   import { loginByMobile, loginCaptcha } from '@/api/login'
   import { Encrypt } from '@u/aes'
+  import useLogin from '@/hooks/useLogin'
 
   // 表单逻辑
   const formRef = ref<FormInstance>()
@@ -17,7 +18,7 @@
     callback()
   }
   const rules: FormRules = {
-    mobile: [{ validator: validatorTel , trigger: 'blur' }],
+    mobile: [{ validator: validatorTel, trigger: 'blur' }],
     captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
   }
 
@@ -35,7 +36,7 @@
     disabled.value = true
     time.value = 60
     const timer = setInterval(() => {
-      time.value --
+      time.value--
       if (time.value < 1) {
         clearInterval(timer)
         disabled.value = false
@@ -52,12 +53,14 @@
     if (!formRef.value) return
     try {
       await formRef.value.validate()
+      isLogin.value = true
       const res = await loginByMobile({
         mobile: Encrypt(form.mobile),
         captcha: Encrypt(form.captcha)
       })
-      if (res.code !== '200') return ElMessage.error(res.msg)
-      console.log('登录成功')
+      isLogin.value = false
+      // 调用hooks
+      useLogin(res)
     } catch (error) {
       ElMessage.warning('请填写正确内容')
     }
@@ -68,19 +71,21 @@
 <template>
   <el-form ref="formRef" :model="form" :rules="rules" label-width="0" size="large">
     <el-form-item prop="mobile">
-      <el-input v-model="form.mobile" prefix-icon="user" clearable placeholder="请输入用户名"></el-input>
+      <el-input v-model="form.mobile" prefix-icon="user" clearable :placeholder="$t('login.mobilePlaceholder')"></el-input>
     </el-form-item>
     <el-form-item prop="captcha">
       <div class="login-msg-yzm">
-        <el-input v-model="form.captcha" prefix-icon="CircleCheck" clearable placeholder="请输入验证码"></el-input>
-        <el-button :disabled="disabled" @click="getCode">获取验证码 <span v-if="disabled">({{ time }})</span></el-button>
+        <el-input v-model="form.captcha" prefix-icon="CircleCheck" clearable :placeholder="$t('login.smsPlaceholder')"></el-input>
+        <el-button :disabled="disabled" @click="getCode"
+          >{{ $t('login.smsGet') }} <span v-if="disabled">({{ time }})</span></el-button
+        >
       </div>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" round style="width: 100%" :loading="isLogin" @click="login">登录</el-button>
+      <el-button type="primary" round style="width: 100%" :loading="isLogin" @click="login">{{ $t('login.signIn') }}</el-button>
     </el-form-item>
     <div>
-      <router-link to="">忘记密码</router-link>
+      <router-link to="">{{ $t('login.forgetPassword') }}</router-link>
     </div>
   </el-form>
 </template>

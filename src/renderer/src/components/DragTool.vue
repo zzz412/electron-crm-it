@@ -14,11 +14,18 @@
   let timer: NodeJS.Timeout | null
 
   /**鼠标按压 */
-  function mousedown() {
-    if (enterFlag) {
-      windowMove(true)
-      mousedownFlag = true
+  function mousedown(event) {
+    if (event.target.nodeName === 'path' || event.target.nodeName === 'svg') return
+    if (!(event?.target as HTMLElement).className.includes('el-')) {
+      if (enterFlag) {
+        windowMove(true)
+        mousedownFlag = true
+      }
     }
+    // if (enterFlag) {
+    //   windowMove(true)
+    //   mousedownFlag = true
+    // }
   }
 
   /**鼠标释放 */
