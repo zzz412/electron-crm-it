@@ -58,9 +58,9 @@
         mobile: Encrypt(form.mobile),
         captcha: Encrypt(form.captcha)
       })
-      isLogin.value = false
       // 调用hooks
       useLogin(res)
+      isLogin.value = false
     } catch (error) {
       ElMessage.warning('请填写正确内容')
     }

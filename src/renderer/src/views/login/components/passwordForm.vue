@@ -3,14 +3,20 @@
   import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
   import { UserRuleForm } from '@/interface/login'
   import { captchaImage, logonByJson } from '@/api/login'
-  import { Encrypt } from '@u/aes'
+  import { Decrypt, Encrypt } from '@u/aes'
   import useLogin from '@/hooks/useLogin'
+  import useMemoPassword from '@/hooks/useMemoPassword'
+
+  // 记住密码
+  const { memoVal, onMemoPassword, setMemoPassword, loadMemoPassword } = useMemoPassword()
 
   // 表单逻辑
   const formRef = ref<FormInstance>()
   const form = reactive<UserRuleForm>({
-    username: 'admin',
-    password: 'abc123456',
+    // username: 'admin',
+    // password: 'abc123456',
+    username: '',
+    password: '',
     key: '',
     captcha: ''
   })
@@ -32,6 +38,11 @@
   }
 
   onBeforeMount(() => {
+    // 读取密码
+    const { username, password } = loadMemoPassword()
+    form.username = Decrypt(username)
+    form.password = Decrypt(password)
+
     getCaptcha()
   })
 
@@ -42,10 +53,14 @@
     try {
       await formRef.value.validate()
       isLogin.value = true
-      const res = await logonByJson({ ...form, username: Encrypt(form.username), password: Encrypt(form.password) })
-      isLogin.value = false
+      // 处理加密参数值
+      const cryptForm = { username: Encrypt(form.username), password: Encrypt(form.password) }
+      const res = await logonByJson({ ...form, ...cryptForm })
       // 调用hooks
       useLogin(res)
+      // 记住密码
+      setMemoPassword(cryptForm)
+      isLogin.value = false
     } catch (error) {
       ElMessage.warning('请填写正确内容')
     }
@@ -68,7 +83,7 @@
       </div>
     </el-form-item>
     <div class="remember">
-      <div><el-checkbox :label="$t('login.forgetPassword2')"></el-checkbox></div>
+      <div><el-checkbox v-model="memoVal" :label="$t('login.forgetPassword2')" @change="onMemoPassword"></el-checkbox></div>
       <div>
         <router-link to="">{{ $t('login.forgetPassword') }}</router-link>
       </div>

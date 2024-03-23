@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, onBeforeMount } from 'vue'
-  import DragTool from './components/DragTool.vue'
+  // import DragTool from './components/DragTool.vue'
   import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
   import en from 'element-plus/dist/locale/en.mjs'
 
@@ -17,9 +17,9 @@
 
 <template>
   <el-config-provider :locale="locale">
-    <drag-tool>
+    <!-- <drag-tool> -->
       <router-view></router-view>
-    </drag-tool>
+    <!-- </drag-tool> -->
   </el-config-provider>
 </template>
 
