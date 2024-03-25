@@ -1,9 +1,10 @@
 <script setup lang="ts">
-  import { IRoleMenuItem } from '@/api/interface/role'
-  import { menuTree, roleAdd } from '@/api/role'
-  import useDicts from '@/hooks/useDicts'
-  import { ElMessage, ElTree } from 'element-plus'
   import { onBeforeMount, reactive, ref } from 'vue'
+  import { IRoleMenuItem } from '@/api/interface/role'
+  import { menuTree, roleAdd, roleDetail, roleUpdate } from '@/api/role'
+  import useDicts from '@/hooks/useDicts'
+  import normalizeMenuList from './normalizeMenuList'
+  import { ElMessage, ElTree } from 'element-plus'
   const { dicts } = useDicts(['system_global_status'])
 
   interface IMenuTreeProps {
@@ -19,6 +20,7 @@
 
   // 表单值
   const form = reactive({
+    id: '', //角色ID
     roleName: '', //角色名称
     rolePerm: '', //角色权限编码
     enabled: '1', //是否启用（0：禁用；1：启用）
@@ -34,11 +36,13 @@
     openAll: false,
     selectAll: false
   })
+
   // * 初始化菜单树
   const initMenuTree = async () => {
-    const res = await menuTree()
-    menuTreeProps.treeList = res.data
+    const { data } = await menuTree({ current: 1, size: 999, enabled: '1' })
+    menuTreeProps.treeList = normalizeMenuList(data.records)
   }
+
   // * 菜单树: 展开 & 折叠
   const toggleTreeCollapse = (e: boolean) => {
     const nodeMap = menuTreeRef.value!.store.nodesMap
@@ -55,13 +59,30 @@
     })
   }
 
+  // * 加载角色信息【修改】
+  const loadRoleInfo = async () => {
+    const { data } = await roleDetail(form.id)
+    const { roleName, rolePerm, enabled, descript, id } = data.role
+    form.id = id
+    form.roleName = roleName
+    form.rolePerm = rolePerm
+    form.enabled = enabled
+    form.descript = descript as string
+    // 设置菜单树选中项
+    menuTreeRef.value?.setCheckedKeys(data.permissions)
+  }
+
   onBeforeMount(() => {
     initMenuTree()
   })
 
   // * 弹窗操作
   const emit = defineEmits(['update'])
-  const open = () => {
+  const open = (id: string) => {
+    if (typeof id === 'string') {
+      form.id = id
+      loadRoleInfo()
+    }
     dialogVisible.value = true
   }
 
@@ -76,8 +97,8 @@
   const onSubmit = async () => {
     // 1. 获取菜单树选中项
     const permissionIds = menuTreeRef.value?.getCheckedKeys() as string[]
-    // 2. 提交表单
-    const res = await roleAdd({ permissionIds, ...form })
+    // 2. 提交表单【判断操作类型】
+    const res = form.id ? await roleUpdate({ permissionIds, ...form }) : await roleAdd({ permissionIds, ...form })
     if (res.code !== '200') return
 
     ElMessage.success('操作成功')

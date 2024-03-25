@@ -119,7 +119,7 @@
                 <el-table-column label="操作" align="center" width="220" fixed="right">
                   <template #default="{ row }">
                     <div class="sys-table-main-actions">
-                      <el-link icon="edit" type="primary" :underline="false">编辑</el-link>
+                      <el-link icon="edit" type="primary" :underline="false" @click="roleDialogRef?.open(row.id)">编辑</el-link>
                       <el-link icon="delete" type="danger" :underline="false" class="link-btn" @click="handleDelete(row.id)">删除</el-link>
                       <router-link class="el-link el-link--error" type="success" to="/">分配用户</router-link>
                     </div>

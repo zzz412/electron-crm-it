@@ -66,11 +66,23 @@ export interface IRoleMenuItem {
 export interface IRoleTreeRes {
   code: string
   msg: string
-  data: IRoleMenuItem[]
+  data: {
+    records: IRoleMenuItem[]
+    total: number
+    size: number
+    current: number
+    orders: any[]
+    optimizeCountSql: boolean
+    searchCount: boolean
+    countId: null
+    maxLimit: null
+    pages: number
+  }
 }
 
 // 角色添加接口[参数]
 export interface IRoleAdd {
+  id?: string | undefined
   roleName: string
   rolePerm: string
   enabled: string
@@ -90,4 +102,28 @@ export interface IRoleDelRes {
   code: string
   msg: string
   data: null
+}
+
+// 角色详情接口[返回]
+export interface IRoleDetail {
+  role: {
+    id: string
+    roleName: string
+    rolePerm: string
+    unitId: string
+    dataPrivileges: string
+    enabled: string
+    createBy: null
+    createTime: number
+    updateBy: null
+    updateTime: null
+    descript: string | null
+  }
+  permissions: string[]
+}
+
+export interface IRoleDetailRes {
+  msg: string
+  code: string
+  data: IRoleDetail
 }

@@ -101,9 +101,11 @@
     <div class="aminui-body">
       <TopBar><UserBar /></TopBar>
       <TagBar />
-      <div class="aminui-main">
-        <router-view></router-view>
-      </div>
+      <el-scrollbar>
+        <div class="aminui-main">
+          <router-view></router-view>
+        </div>
+      </el-scrollbar>
     </div>
   </section>
 </template>
@@ -118,6 +120,8 @@
       display: flex;
       flex-direction: column;
       width: 65px;
+      // flex-basis: 65px;
+      flex-shrink: 0;
       height: 100vh;
       overflow: hidden;
       background: #222b45;
@@ -172,6 +176,8 @@
       display: flex;
       flex-flow: column;
       width: 210px;
+      flex-shrink: 0;
+      flex-basis: 210px;
       height: 100vh;
       background: #fff;
       box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
@@ -210,11 +216,13 @@
     }
     .aminui-side.isCollapse {
       width: 65px;
+      flex-basis: 65px;
     }
     .aminui-body {
       display: flex;
       flex-direction: column;
       flex: 1;
+      overflow: auto;
       .aminui-main {
         overflow: auto;
         flex: 1;
